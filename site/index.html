@@ -18,9 +18,8 @@
     </header>
 
     <main>
-      <ul class="catalog" id="catalog">
-        <li class="loading">Loading catalog...</li>
-      </ul>
+      <p id="status">Loading catalog...</p>
+      <ul class="catalog" id="catalog"></ul>
     </main>
 
     <footer>
@@ -29,42 +28,71 @@
   </div>
 
   <script>
-    const catalogEl = document.getElementById('catalog');
+    (function () {
+      var status = document.getElementById('status');
+      var catalog = document.getElementById('catalog');
 
-    fetch('data/catalog.json')
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function (podcasts) {
-        if (!Array.isArray(podcasts) || !podcasts.length) {
-          catalogEl.innerHTML = '<li class="loading">No podcasts yet.</li>';
+      function setText(msg, isError) {
+        status.textContent = msg;
+        status.className = isError ? 'error' : 'loading';
+      }
+
+      function addPodcast(p) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = 'podcast.html?id=' + encodeURIComponent(p.id);
+
+        var title = document.createElement('span');
+        title.className = 'podcast-title';
+        title.textContent = p.title || 'Untitled';
+
+        var meta = document.createElement('span');
+        meta.className = 'podcast-meta';
+        var parts = [];
+        if (p.date) parts.push(p.date);
+        if (p.lang) parts.push(p.lang);
+        if (p.duration_min) parts.push('~' + Math.round(p.duration_min) + ' min');
+        meta.textContent = parts.join(' \u00b7 ');
+
+        var summary = document.createElement('span');
+        summary.className = 'podcast-summary';
+        summary.textContent = p.summary || '';
+
+        a.appendChild(title);
+        a.appendChild(meta);
+        a.appendChild(summary);
+        li.appendChild(a);
+        catalog.appendChild(li);
+      }
+
+      var url = 'data/catalog.json';
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onload = function () {
+        if (xhr.status !== 200) {
+          setText('Error: HTTP ' + xhr.status + ' loading ' + url, true);
           return;
         }
-        var html = '';
-        for (var i = 0; i < podcasts.length; i++) {
-          var p = podcasts[i];
-          var meta = esc(p.date || '');
-          if (p.lang) meta += ' \u00b7 ' + esc(p.lang);
-          if (p.duration_min) meta += ' \u00b7 ~' + Math.round(p.duration_min) + ' min';
-          html += '<li><a href="podcast.html?id=' + encodeURIComponent(p.id) + '">'
-            + '<span class="podcast-title">' + esc(p.title) + '</span>'
-            + '<span class="podcast-meta">' + meta + '</span>'
-            + '<span class="podcast-summary">' + esc(p.summary) + '</span>'
-            + '</a></li>';
+        try {
+          var podcasts = JSON.parse(xhr.responseText);
+        } catch (e) {
+          setText('Error: invalid JSON in catalog', true);
+          return;
         }
-        catalogEl.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Catalog error:', err);
-        catalogEl.innerHTML = '<li class="error">Failed to load catalog.</li>';
-      });
-
-    function esc(s) {
-      var d = document.createElement('span');
-      d.textContent = s || '';
-      return d.innerHTML;
-    }
+        if (!Array.isArray(podcasts) || podcasts.length === 0) {
+          setText('No podcasts yet.', false);
+          return;
+        }
+        for (var i = 0; i < podcasts.length; i++) {
+          addPodcast(podcasts[i]);
+        }
+        setText('Loaded ' + podcasts.length + ' podcast' + (podcasts.length === 1 ? '' : 's'), false);
+      };
+      xhr.onerror = function () {
+        setText('Error: network request failed for ' + url, true);
+      };
+      xhr.send();
+    })();
   </script>
 </body>
 </html>
