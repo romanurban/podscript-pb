@@ -19,9 +19,8 @@
 
     <main>
       <a href="./" class="back-link">&larr; Back to catalog</a>
-      <div id="content" class="podcast-content">
-        <p class="loading">Loading...</p>
-      </div>
+      <p id="status" class="loading">Loading...</p>
+      <div id="content" class="podcast-content"></div>
     </main>
 
     <footer>
@@ -30,31 +29,43 @@
   </div>
 
   <script>
-    var contentEl = document.getElementById('content');
-    var id = new URLSearchParams(window.location.search).get('id');
+    (function () {
+      var status = document.getElementById('status');
+      var content = document.getElementById('content');
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('id');
 
-    if (!id) {
-      contentEl.innerHTML = '<p class="error">No podcast specified.</p>';
-    } else {
-      fetch('data/podcasts/' + encodeURIComponent(id) + '/preview.md')
-        .then(function (r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.text();
-        })
-        .then(function (md) {
-          if (typeof marked !== 'undefined' && marked.parse) {
-            contentEl.innerHTML = marked.parse(md);
-          } else {
-            contentEl.innerText = md;
-          }
-          var h1 = contentEl.querySelector('h1');
-          if (h1) document.title = h1.textContent + ' \u2014 Podscript';
-        })
-        .catch(function (err) {
-          console.error('Podcast load error:', err);
-          contentEl.innerHTML = '<p class="error">Podcast not found.</p>';
-        });
-    }
+      if (!id) {
+        status.textContent = 'No podcast specified.';
+        status.className = 'error';
+        return;
+      }
+
+      var url = 'data/podcasts/' + encodeURIComponent(id) + '/preview.md';
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onload = function () {
+        if (xhr.status !== 200) {
+          status.textContent = 'Podcast not found (HTTP ' + xhr.status + ')';
+          status.className = 'error';
+          return;
+        }
+        var md = xhr.responseText;
+        if (typeof marked !== 'undefined' && marked.parse) {
+          content.innerHTML = marked.parse(md);
+        } else {
+          content.textContent = md;
+        }
+        status.style.display = 'none';
+        var h1 = content.querySelector('h1');
+        if (h1) document.title = h1.textContent + ' \u2014 Podscript';
+      };
+      xhr.onerror = function () {
+        status.textContent = 'Network error loading podcast.';
+        status.className = 'error';
+      };
+      xhr.send();
+    })();
   </script>
 </body>
 </html>
