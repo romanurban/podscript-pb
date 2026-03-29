@@ -30,23 +30,28 @@
   </div>
 
   <script>
-    const contentEl = document.getElementById('content');
-    const id = new URLSearchParams(window.location.search).get('id');
+    var contentEl = document.getElementById('content');
+    var id = new URLSearchParams(window.location.search).get('id');
 
     if (!id) {
       contentEl.innerHTML = '<p class="error">No podcast specified.</p>';
     } else {
-      fetch(`data/podcasts/${encodeURIComponent(id)}/preview.md`)
-        .then(r => {
-          if (!r.ok) throw new Error(r.status);
+      fetch('data/podcasts/' + encodeURIComponent(id) + '/preview.md')
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.text();
         })
-        .then(md => {
-          contentEl.innerHTML = marked.parse(md);
-          const h1 = contentEl.querySelector('h1');
-          if (h1) document.title = h1.textContent + ' — Podscript';
+        .then(function (md) {
+          if (typeof marked !== 'undefined' && marked.parse) {
+            contentEl.innerHTML = marked.parse(md);
+          } else {
+            contentEl.innerText = md;
+          }
+          var h1 = contentEl.querySelector('h1');
+          if (h1) document.title = h1.textContent + ' \u2014 Podscript';
         })
-        .catch(() => {
+        .catch(function (err) {
+          console.error('Podcast load error:', err);
           contentEl.innerHTML = '<p class="error">Podcast not found.</p>';
         });
     }
