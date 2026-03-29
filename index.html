@@ -19,7 +19,7 @@
 
     <main>
       <p id="status">Loading catalog...</p>
-      <ul class="catalog" id="catalog"></ul>
+      <div class="catalog" id="catalog"></div>
     </main>
 
     <footer>
@@ -38,31 +38,34 @@
       }
 
       function addPodcast(p) {
-        var li = document.createElement('li');
-        var a = document.createElement('a');
-        a.href = 'podcast.html?id=' + encodeURIComponent(p.id);
+        var card = document.createElement('div');
+        card.className = 'podcast-card';
 
-        var title = document.createElement('span');
+        var link = document.createElement('a');
+        link.href = 'podcast.html?id=' + encodeURIComponent(p.id);
+        link.className = 'podcast-link';
+
+        var title = document.createElement('strong');
         title.className = 'podcast-title';
         title.textContent = p.title || 'Untitled';
 
-        var meta = document.createElement('span');
+        var meta = document.createElement('div');
         meta.className = 'podcast-meta';
         var parts = [];
         if (p.date) parts.push(p.date);
         if (p.lang) parts.push(p.lang);
         if (p.duration_min) parts.push('~' + Math.round(p.duration_min) + ' min');
-        meta.textContent = parts.join(' \u00b7 ');
+        meta.textContent = parts.join(' · ');
 
-        var summary = document.createElement('span');
+        var summary = document.createElement('div');
         summary.className = 'podcast-summary';
         summary.textContent = p.summary || '';
 
-        a.appendChild(title);
-        a.appendChild(meta);
-        a.appendChild(summary);
-        li.appendChild(a);
-        catalog.appendChild(li);
+        link.appendChild(title);
+        if (meta.textContent) link.appendChild(meta);
+        if (summary.textContent) link.appendChild(summary);
+        card.appendChild(link);
+        catalog.appendChild(card);
       }
 
       var url = 'data/catalog.json';
