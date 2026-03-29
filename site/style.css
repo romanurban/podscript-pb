@@ -50,26 +50,25 @@ nav a:hover {
 /* Catalog */
 
 .catalog {
-  display: block;
+  list-style: none;
 }
 
-.podcast-card {
-  display: block;
+.catalog li {
   border-bottom: 1px solid #e5e5e5;
   padding: 1.25rem 0;
 }
 
-.podcast-card:last-child {
+.catalog li:last-child {
   border-bottom: none;
 }
 
-.podcast-link {
-  display: block;
+.catalog a {
   text-decoration: none;
   color: inherit;
+  display: block;
 }
 
-.podcast-link:hover .podcast-title {
+.catalog a:hover .podcast-title {
   color: #0066cc;
 }
 
