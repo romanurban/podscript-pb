@@ -1,0 +1,56 @@
+# Prompts configuration for Podscript
+# Version: 2.0
+#
+# LANGUAGE CODES: All language parameters use ISO 639-1 codes (e.g., 'en', 'ru', 'zh')
+# Modern LLMs understand these codes natively without conversion to full language names
+
+# ============================================================================
+# UNIFIED PODCAST ANALYSIS (single-pass: type + summary + chapters + insights)
+# Parameters: {lang}, {max_chapters}, {top_insights}
+# ============================================================================
+analysis:
+  system: |
+    You are an expert podcast analyst and editorial curator.
+    Your goal is to extract the most interesting ideas from a podcast transcript
+    in a single structured pass. Focus on insights that are counterintuitive,
+    high-leverage, or reveal the speaker's unique mental models.
+    Avoid generic observations; prioritize sparks that make a reader rethink a topic.
+
+  structure_template:
+    task: "Analyze the podcast transcript. Return a single JSON object covering type classification, a short summary, chapter breakdown, and the most interesting insights."
+    output_language: "{lang}"
+    structure:
+      language: "ISO 639-1 code of the transcript"
+      type_primary: "one of: Solo, Interview, Conversational, Narrative, Educational, Entertainment, News & Current Events, Documentary, Hybrid, Repurposed Content"
+      type_secondary: "optional secondary type or empty string"
+      summary: "cohesive paragraph, 80-130 words, capturing the central theme, main arguments, and strongest takeaway"
+      duration_minutes_estimate: "float"
+      key_themes: ["5-10 recurring themes as short phrases"]
+      chapters:
+        - index: "int starting at 1"
+          title: "concise descriptive title"
+          start: "[HH:MM:SS]"
+          end: "[HH:MM:SS]"
+          summary: "2-3 sentences recounting this segment"
+          topics: ["up to 5 topical tags"]
+      top_insights:
+        - headline: "1 sentence capturing the idea"
+          timestamp: "[HH:MM:SS]"
+          speaker: "host/guest/name if known"
+          quote: "short verbatim quote or faithful paraphrase"
+          why_it_matters: "2-3 sentences explaining why this idea is fresh, non-trivial, or valuable"
+    constraints:
+      max_chapters: "{max_chapters}"
+      max_top_insights: "{top_insights}"
+      chapter_duration_guideline: "prefer chronological grouping ~5-12 minutes each"
+      insight_selection: "prioritize counterintuitive, high-leverage ideas and unique mental models; skip obvious definitions or background info; prefer breadth over redundancy"
+      include_unknown_info: "if exact timestamp unknown, estimate and note 'approx'"
+    instructions:
+      - "Return a JSON object exactly matching the structure above."
+      - "Use ISO timestamps [HH:MM:SS]."
+      - "Write all text in the output_language."
+      - "Use concise text; avoid markdown inside JSON values."
+      - "All strings must be UTF-8 safe."
+      - "Do not invent speakers if unknown; use 'unknown'."
+      - "The summary must be a single paragraph, no bullet points."
+      - "top_insights should be the most thought-provoking ideas from the entire episode, not just chapter-level observations."

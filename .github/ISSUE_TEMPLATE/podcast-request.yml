@@ -1,0 +1,28 @@
+name: Podcast Request
+description: Request a podcast to be transcribed and analyzed
+title: "[Request] "
+labels: ["podcast-request"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Podcast URL
+      description: YouTube or direct audio URL
+      placeholder: https://youtube.com/watch?v=...
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language (optional)
+      description: Primary language of the podcast (e.g. en, ru, es)
+      placeholder: en
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (optional)
+      description: Any additional context
+    validations:
+      required: false

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podscript</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><a href="/">Podscript</a></h1>
+      <p>Podcast insights, transcribed and analyzed</p>
+      <nav>
+        <a href="/">Catalog</a>
+        <a href="request.html">Request a podcast</a>
+      </nav>
+    </header>
+
+    <main>
+      <ul class="catalog" id="catalog">
+        <li class="loading">Loading catalog...</li>
+      </ul>
+    </main>
+
+    <footer>
+      Powered by <a href="https://github.com/urbanroman/podscript">Podscript</a>
+    </footer>
+  </div>
+
+  <script>
+    const catalogEl = document.getElementById('catalog');
+
+    fetch('data/catalog.json')
+      .then(r => r.json())
+      .then(podcasts => {
+        if (!podcasts.length) {
+          catalogEl.innerHTML = '<li class="loading">No podcasts yet.</li>';
+          return;
+        }
+        catalogEl.innerHTML = podcasts.map(p => `
+          <li>
+            <a href="podcast.html?id=${encodeURIComponent(p.id)}">
+              <div class="podcast-title">${esc(p.title)}</div>
+              <div class="podcast-meta">
+                ${esc(p.date)}${p.lang ? ' &middot; ' + esc(p.lang) : ''}${p.duration_min ? ' &middot; ~' + Math.round(p.duration_min) + ' min' : ''}
+              </div>
+              <div class="podcast-summary">${esc(p.summary)}</div>
+            </a>
+          </li>
+        `).join('');
+      })
+      .catch(() => {
+        catalogEl.innerHTML = '<li class="error">Failed to load catalog.</li>';
+      });
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

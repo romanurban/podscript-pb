@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request a Podcast — Podscript</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><a href="/">Podscript</a></h1>
+      <nav>
+        <a href="/">Catalog</a>
+        <a href="request.html">Request a podcast</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Request a podcast</h2>
+
+      <div class="request-info">
+        <p>
+          Want a podcast transcribed and analyzed? Submit a request and it will
+          be added to the queue. Processing is manual and may take a few days.
+        </p>
+        <p>
+          You'll need a GitHub account to submit. Your request will be visible
+          as a public issue so you can track its status.
+        </p>
+      </div>
+
+      <a class="request-btn"
+         href="https://github.com/urbanroman/podscript/issues/new?template=podcast-request.yml"
+         target="_blank" rel="noopener">
+        Submit request on GitHub
+      </a>
+
+      <a class="queue-link"
+         href="https://github.com/urbanroman/podscript/issues?q=is%3Aissue+label%3Apodcast-request"
+         target="_blank" rel="noopener">
+        View current queue
+      </a>
+    </main>
+
+    <footer>
+      Powered by <a href="https://github.com/urbanroman/podscript">Podscript</a>
+    </footer>
+  </div>
+</body>
+</html>
