@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podscript</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><a href="/">Podscript</a></h1>
+      <nav>
+        <a href="/">Catalog</a>
+        <a href="request.html">Request a podcast</a>
+      </nav>
+    </header>
+
+    <main>
+      <a href="/" class="back-link">&larr; Back to catalog</a>
+      <div id="content" class="podcast-content">
+        <p class="loading">Loading...</p>
+      </div>
+    </main>
+
+    <footer>
+      Powered by <a href="https://github.com/urbanroman/podscript">Podscript</a>
+    </footer>
+  </div>
+
+  <script>
+    const contentEl = document.getElementById('content');
+    const id = new URLSearchParams(window.location.search).get('id');
+
+    if (!id) {
+      contentEl.innerHTML = '<p class="error">No podcast specified.</p>';
+    } else {
+      fetch(`data/podcasts/${encodeURIComponent(id)}/preview.md`)
+        .then(r => {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        })
+        .then(md => {
+          contentEl.innerHTML = marked.parse(md);
+          const h1 = contentEl.querySelector('h1');
+          if (h1) document.title = h1.textContent + ' — Podscript';
+        })
+        .catch(() => {
+          contentEl.innerHTML = '<p class="error">Podcast not found.</p>';
+        });
+    }
+  </script>
+</body>
+</html>
