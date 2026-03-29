@@ -32,30 +32,36 @@
     const catalogEl = document.getElementById('catalog');
 
     fetch('data/catalog.json')
-      .then(r => r.json())
-      .then(podcasts => {
-        if (!podcasts.length) {
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (podcasts) {
+        if (!Array.isArray(podcasts) || !podcasts.length) {
           catalogEl.innerHTML = '<li class="loading">No podcasts yet.</li>';
           return;
         }
-        catalogEl.innerHTML = podcasts.map(p => `
-          <li>
-            <a href="podcast.html?id=${encodeURIComponent(p.id)}">
-              <div class="podcast-title">${esc(p.title)}</div>
-              <div class="podcast-meta">
-                ${esc(p.date)}${p.lang ? ' &middot; ' + esc(p.lang) : ''}${p.duration_min ? ' &middot; ~' + Math.round(p.duration_min) + ' min' : ''}
-              </div>
-              <div class="podcast-summary">${esc(p.summary)}</div>
-            </a>
-          </li>
-        `).join('');
+        var html = '';
+        for (var i = 0; i < podcasts.length; i++) {
+          var p = podcasts[i];
+          var meta = esc(p.date || '');
+          if (p.lang) meta += ' \u00b7 ' + esc(p.lang);
+          if (p.duration_min) meta += ' \u00b7 ~' + Math.round(p.duration_min) + ' min';
+          html += '<li><a href="podcast.html?id=' + encodeURIComponent(p.id) + '">'
+            + '<span class="podcast-title">' + esc(p.title) + '</span>'
+            + '<span class="podcast-meta">' + meta + '</span>'
+            + '<span class="podcast-summary">' + esc(p.summary) + '</span>'
+            + '</a></li>';
+        }
+        catalogEl.innerHTML = html;
       })
-      .catch(() => {
+      .catch(function (err) {
+        console.error('Catalog error:', err);
         catalogEl.innerHTML = '<li class="error">Failed to load catalog.</li>';
       });
 
     function esc(s) {
-      const d = document.createElement('div');
+      var d = document.createElement('span');
       d.textContent = s || '';
       return d.innerHTML;
     }

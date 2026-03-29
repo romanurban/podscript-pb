@@ -72,6 +72,12 @@ nav a:hover {
   color: #0066cc;
 }
 
+.podcast-title,
+.podcast-meta,
+.podcast-summary {
+  display: block;
+}
+
 .podcast-title {
   font-size: 1.1rem;
   font-weight: 600;
