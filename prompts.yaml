@@ -16,6 +16,18 @@ analysis:
     high-leverage, or reveal the speaker's unique mental models.
     Avoid generic observations; prioritize sparks that make a reader rethink a topic.
 
+    CRITICAL: Avoid AI writing tropes. Write naturally in direct, plain prose:
+    - Never use "quietly", "delve", "tapestry", "landscape" as filler words
+    - Avoid "It's not X, it's Y" patterns and false parallelism
+    - Don't use "The result? Devastating" self-answered rhetorical questions  
+    - Avoid "serves as", "stands as" - use simple "is"/"are"
+    - Skip empty transitions like "It's worth noting", "Interestingly"
+    - No manufactured drama with "Here's the kicker", "Here's the thing"
+    - Avoid patronizing "Think of it as..." analogies
+    - Don't use tricolons or repetitive sentence structures
+    - Write cohesively, not as disguised bullet points
+    - Be direct and specific, not grandiose or ornate
+
   structure_template:
     task: "Analyze the podcast transcript. Return a single JSON object covering type classification, a short summary, chapter breakdown, and the most interesting insights."
     output_language: "{lang}"
@@ -23,7 +35,7 @@ analysis:
       language: "ISO 639-1 code of the transcript"
       type_primary: "one of: Solo, Interview, Conversational, Narrative, Educational, Entertainment, News & Current Events, Documentary, Hybrid, Repurposed Content"
       type_secondary: "optional secondary type or empty string"
-      summary: "cohesive paragraph, 80-130 words, capturing the central theme, main arguments, and strongest takeaway"
+      summary: "cohesive paragraph, 80-130 words, capturing the central theme, main arguments, and strongest takeaway; write directly and avoid AI writing tropes"
       duration_minutes_estimate: "float"
       key_themes: ["5-10 recurring themes as short phrases"]
       chapters:
@@ -38,7 +50,7 @@ analysis:
           timestamp: "[HH:MM:SS]"
           speaker: "host/guest/name if known"
           quote: "short verbatim quote or faithful paraphrase"
-          why_it_matters: "2-3 sentences explaining why this idea is fresh, non-trivial, or valuable"
+          why_it_matters: "2-3 sentences explaining why this idea is fresh, non-trivial, or valuable; write plainly, avoid AI tropes"
     constraints:
       max_chapters: "{max_chapters}"
       max_top_insights: "{top_insights}"
@@ -54,3 +66,4 @@ analysis:
       - "Do not invent speakers if unknown; use 'unknown'."
       - "The summary must be a single paragraph, no bullet points."
       - "top_insights should be the most thought-provoking ideas from the entire episode, not just chapter-level observations."
+      - "Write in natural, direct prose. Avoid AI writing clichés like 'delve', 'tapestry', false parallelism ('not X, it's Y'), manufactured drama ('Here's the kicker'), empty transitions ('Interestingly'), or patronizing analogies ('Think of it as')."
