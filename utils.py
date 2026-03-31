@@ -98,7 +98,7 @@ def get_openai_client():
         return None
 
 
-def get_model_for_task(task_name, default_model="gpt-5-mini"):
+def get_model_for_task(task_name, default_model="gpt-5.4-mini"):
     """Get model for a task. Checks PODSCRIPT_ANALYSIS_MODEL, then OPENAI_MODEL, then default."""
     task_env_vars = {
         'analysis': 'PODSCRIPT_ANALYSIS_MODEL',

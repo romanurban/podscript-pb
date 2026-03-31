@@ -77,6 +77,11 @@ def transcribe_youtube_podcast(youtube_url, language=None, chunk_duration=10, cl
     script_start = time.time()
     print("Starting YouTube Podcast Transcription Pipeline")
     print("="*60)
+    
+    # Log initial system state
+    import psutil
+    memory = psutil.virtual_memory()
+    print(f"🖥️  System state: {memory.percent:.1f}% memory, {memory.available/1024/1024/1024:.1f}GB available")
 
     try:
         # Step 1: Extract audio from YouTube (skip if audio exists)

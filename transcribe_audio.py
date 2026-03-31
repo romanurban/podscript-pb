@@ -5,6 +5,8 @@ import os
 import json
 import time
 import wave
+import gc
+import psutil
 from faster_whisper import WhisperModel
 from tqdm import tqdm
 from utils import format_time_srt, format_time_simple
@@ -102,7 +104,7 @@ def transcribe_audio(audio_file, language=None):
     # Start timing the actual transcription processing
     processing_start = time.time()
 
-    # Convert segments to list while showing progress
+    # Convert segments to list while showing progress with memory monitoring
     segments_list = []
     if audio_duration:
         with tqdm(total=audio_duration, unit="s", desc="🎧 Transcribing",
@@ -115,6 +117,16 @@ def transcribe_audio(audio_file, language=None):
                 start_time = format_time_simple(segment.start)
                 end_time = format_time_simple(segment.end)
                 tqdm.write(f"  [{start_time}-{end_time}]: {segment.text.strip()}")
+                
+                # Memory monitoring and cleanup every 50 segments
+                if i % 50 == 0:
+                    memory_percent = psutil.virtual_memory().percent
+                    if memory_percent > 85:
+                        tqdm.write(f"⚠️  High memory usage ({memory_percent:.1f}%) - running garbage collection")
+                        gc.collect()
+                        memory_percent = psutil.virtual_memory().percent
+                        tqdm.write(f"✓ Memory after cleanup: {memory_percent:.1f}%")
+                    
                 pbar.set_postfix_str(f"Segment {i}")
                 pbar.update(segment.end - pbar.n)
                 # Force immediate update
@@ -126,6 +138,13 @@ def transcribe_audio(audio_file, language=None):
             start_time = format_time_simple(segment.start)
             end_time = format_time_simple(segment.end)
             print(f"  Segment {i} [{start_time}-{end_time}]: {segment.text.strip()}")
+            
+            # Memory monitoring for fallback mode too
+            if i % 50 == 0:
+                memory_percent = psutil.virtual_memory().percent
+                if memory_percent > 85:
+                    print(f"⚠️  High memory usage ({memory_percent:.1f}%) - running garbage collection")
+                    gc.collect()
 
     # Calculate and report actual transcription time
     processing_time = time.time() - processing_start

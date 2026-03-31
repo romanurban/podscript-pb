@@ -29,5 +29,6 @@ else
     echo "⚠️  yt-dlp executable not found in the virtual environment; skipping auto-update"
 fi
 
-# Use the venv directly
-exec "./venv/bin/python" youtube_podcast_transcriber.py "$@"
+# Use caffeinate to prevent sleep and run with the venv
+echo "🔋 Running with caffeinate to prevent system sleep during long transcription..."
+exec caffeinate -s "./venv/bin/python" youtube_podcast_transcriber.py "$@"

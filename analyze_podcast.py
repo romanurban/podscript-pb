@@ -22,7 +22,7 @@ def build_analysis(transcript_text, title=None, lang="en", top_insights=8, max_c
     if not client:
         return None
 
-    model = get_model_for_task('analysis', default_model="gpt-5-mini")
+    model = get_model_for_task('analysis', default_model="gpt-5.4-mini")
 
     system_prompt = get_prompt('analysis', 'system')
     structure_template = get_prompt('analysis', 'structure_template')
