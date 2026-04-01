@@ -18,6 +18,12 @@
     </header>
 
     <main>
+      <div class="filter-bar" id="filter-bar">
+        <span class="filter-label">Language:</span>
+        <button class="filter-btn active" data-lang="all">All</button>
+        <button class="filter-btn" data-lang="ru">Русский</button>
+        <button class="filter-btn" data-lang="en">English</button>
+      </div>
       <p id="status">Loading catalog...</p>
       <ul class="catalog" id="catalog"></ul>
     </main>
@@ -31,13 +37,15 @@
     (function () {
       var status = document.getElementById('status');
       var catalog = document.getElementById('catalog');
+      var allPodcasts = [];
+      var currentLang = 'all';
 
       function setText(msg, isError) {
         status.textContent = msg;
         status.className = isError ? 'error' : 'loading';
       }
 
-      function addPodcast(p) {
+      function renderPodcast(p) {
         var li = document.createElement('li');
         var a = document.createElement('a');
         a.href = 'podcast.html?id=' + encodeURIComponent(p.id);
@@ -50,9 +58,18 @@
         meta.className = 'podcast-meta';
         var parts = [];
         if (p.date) parts.push(p.date);
-        if (p.lang) parts.push(p.lang);
+        if (p.lang) {
+          var langSpan = document.createElement('span');
+          langSpan.textContent = p.lang.toUpperCase();
+          meta.appendChild(langSpan);
+        }
         if (p.duration_min) parts.push('~' + Math.round(p.duration_min) + ' min');
-        meta.textContent = parts.join(' \u00b7 ');
+        var durationText = parts.join(' \u00b7 ');
+        if (durationText) {
+          var durSpan = document.createElement('span');
+          durSpan.textContent = durationText;
+          meta.appendChild(durSpan);
+        }
 
         var summary = document.createElement('span');
         summary.className = 'podcast-summary';
@@ -62,7 +79,40 @@
         a.appendChild(meta);
         a.appendChild(summary);
         li.appendChild(a);
-        catalog.appendChild(li);
+        return li;
+      }
+
+      function renderCatalog() {
+        catalog.innerHTML = '';
+        var filtered = currentLang === 'all' 
+          ? allPodcasts 
+          : allPodcasts.filter(function(p) { return p.lang === currentLang; });
+        
+        if (filtered.length === 0) {
+          setText('No podcasts found for this language.', false);
+          return;
+        }
+        
+        for (var i = 0; i < filtered.length; i++) {
+          catalog.appendChild(renderPodcast(filtered[i]));
+        }
+        var total = allPodcasts.length;
+        var showing = filtered.length;
+        setText('Showing ' + showing + ' of ' + total + ' podcast' + (total === 1 ? '' : 's'), false);
+      }
+
+      function setupFilters() {
+        var filterBar = document.getElementById('filter-bar');
+        var buttons = filterBar.querySelectorAll('.filter-btn');
+        
+        buttons.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            buttons.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            currentLang = btn.getAttribute('data-lang');
+            renderCatalog();
+          });
+        });
       }
 
       var url = 'data/catalog.json';
@@ -74,19 +124,17 @@
           return;
         }
         try {
-          var podcasts = JSON.parse(xhr.responseText);
+          allPodcasts = JSON.parse(xhr.responseText);
         } catch (e) {
           setText('Error: invalid JSON in catalog', true);
           return;
         }
-        if (!Array.isArray(podcasts) || podcasts.length === 0) {
+        if (!Array.isArray(allPodcasts) || allPodcasts.length === 0) {
           setText('No podcasts yet.', false);
           return;
         }
-        for (var i = 0; i < podcasts.length; i++) {
-          addPodcast(podcasts[i]);
-        }
-        setText('Loaded ' + podcasts.length + ' podcast' + (podcasts.length === 1 ? '' : 's'), false);
+        setupFilters();
+        renderCatalog();
       };
       xhr.onerror = function () {
         setText('Error: network request failed for ' + url, true);
