@@ -40,6 +40,7 @@ Options:
 - `--max-chapters N` — maximum chapters (default: 10)
 - `--force` — regenerate all outputs (default: resume mode skips existing files)
 - `--title TITLE` — episode title
+- `--youtube-id ID` — YouTube video ID (adds embed player and clickable chapter timestamps)
 
 ## Individual Commands
 
@@ -49,15 +50,15 @@ Options:
 
 ### analyze
 ```bash
-./run.sh analyze transcript.txt [--lang en] [--top 8] [--chapters 10] [--title "Title"]
+./run.sh analyze transcript.txt [--lang en] [--top 8] [--chapters 10] [--title "Title"] [--youtube-id ID]
 ```
-Single-pass analysis: type, summary, chapters, key themes, and top insights. Outputs `*_analysis.json`.
+Single-pass analysis: type, summary, chapters, key themes, and top insights. Outputs `*_analysis.json`. With `--youtube-id` stores the ID for use during render.
 
 ### render
 ```bash
-./run.sh render analysis.json [--output preview.md]
+./run.sh render analysis.json [--output preview.md] [--youtube-id ID]
 ```
-Renders analysis JSON into a clean markdown preview. No LLM call. Outputs `*_preview.md`.
+Renders analysis JSON into a clean markdown preview. No LLM call. Outputs `*_preview.md`. With `--youtube-id` adds YouTube embed and clickable chapter timestamps.
 
 ## Output Files
 
