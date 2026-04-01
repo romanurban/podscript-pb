@@ -14,18 +14,15 @@
       <nav>
         <a href="./">Catalog</a>
         <a href="request.html">Request a podcast</a>
+        <select id="lang-select" class="lang-select-nav">
+          <option value="all">All</option>
+          <option value="ru">RU</option>
+          <option value="en" selected>EN</option>
+        </select>
       </nav>
     </header>
 
     <main>
-      <div class="filter-bar" id="filter-bar">
-        <label for="lang-select">Language:</label>
-        <select id="lang-select" class="lang-select">
-          <option value="all">All languages</option>
-          <option value="ru">Русский</option>
-          <option value="en" selected>English</option>
-        </select>
-      </div>
       <p id="status">Loading catalog...</p>
       <ul class="catalog" id="catalog"></ul>
     </main>
