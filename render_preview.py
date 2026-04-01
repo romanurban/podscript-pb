@@ -18,7 +18,20 @@ def load_analysis(path):
         return json.load(f)
 
 
-def render_markdown(data):
+def parse_timestamp(ts_str):
+    """Convert [HH:MM:SS] or HH:MM:SS to seconds for YouTube link."""
+    ts = ts_str.strip('[]')
+    parts = ts.split(':')
+    if len(parts) == 3:
+        h, m, s = map(int, parts)
+        return h * 3600 + m * 60 + s
+    elif len(parts) == 2:
+        m, s = map(int, parts)
+        return m * 60 + s
+    return 0
+
+
+def render_markdown(data, youtube_id=None):
     title = data.get("title") or "Podcast Analysis"
     type_primary = data.get("type_primary", "Unknown")
     type_secondary = data.get("type_secondary", "")
@@ -30,6 +43,11 @@ def render_markdown(data):
     themes = data.get("key_themes", [])
 
     md = []
+
+    # YouTube embed
+    if youtube_id:
+        md.append(f"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/{youtube_id}\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>")
+        md.append("")
 
     # Header
     md.append(f"# {title}")
@@ -80,14 +98,21 @@ def render_markdown(data):
         md.append("## Chapters")
         md.append("")
         md.append("| # | Time | Title | Summary |")
-        md.append("|---|------|-------|---------|")
+        md.append("|---|------|-------|-----------|")
         for ch in chapters:
             idx = ch.get("index", "")
-            start = ch.get("start", "").strip("[]")
-            end = ch.get("end", "").strip("[]")
-            time_range = f"{start}–{end}" if start and end else start or end
+            start_raw = ch.get("start", "").strip("[]")
+            end_raw = ch.get("end", "").strip("[]")
+            time_range = f"{start_raw}–{end_raw}" if start_raw and end_raw else start_raw or end_raw
             ch_title = ch.get("title", "")
             ch_summary = ch.get("summary", "").replace("\n", " ")
+            
+            # Make timestamp a YouTube link
+            if youtube_id and start_raw:
+                seconds = parse_timestamp(start_raw)
+                yt_link = f"https://youtu.be/{youtube_id}?t={seconds}"
+                time_range = f"[{time_range}]({yt_link})"
+            
             md.append(f"| {idx} | {time_range} | {ch_title} | {ch_summary} |")
         md.append("")
 
@@ -129,6 +154,7 @@ def main():
     )
     parser.add_argument("analysis_json", help="Path to analysis JSON (output of analyze_podcast.py)")
     parser.add_argument("--output", help="Custom output path (default: derived from input)")
+    parser.add_argument("--youtube-id", help="YouTube video ID for embed and timestamp links")
     args = parser.parse_args()
 
     if not os.path.exists(args.analysis_json):
@@ -136,7 +162,7 @@ def main():
         sys.exit(1)
 
     data = load_analysis(args.analysis_json)
-    md = render_markdown(data)
+    md = render_markdown(data, youtube_id=args.youtube_id)
 
     output_path = args.output or derive_preview_path(args.analysis_json)
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)

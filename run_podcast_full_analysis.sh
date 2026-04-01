@@ -14,6 +14,7 @@ Arguments:
 
 Options:
   --title TITLE             Episode title
+  --youtube-id ID            YouTube video ID for embed and timestamp links
   --lang CODE               Output language (default: auto-detected or en)
   --top-insights N          Number of top insights to extract (default: 8)
   --max-chapters N          Maximum chapters (default: 10)
@@ -115,6 +116,7 @@ fi
 
 TRANSCRIPT_FILE=""
 TITLE=""
+YOUTUBE_ID=""
 LANG=""
 LANG_SET=0
 TOP_INSIGHTS=8
@@ -125,6 +127,10 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --title)
             TITLE="$2"
+            shift 2
+            ;;
+        --youtube-id)
+            YOUTUBE_ID="$2"
             shift 2
             ;;
         --lang|--lang-hint|--summary-lang)
@@ -206,6 +212,7 @@ PREVIEW_FILE="${transcript_dir}/${base_name}_preview.md"
 
 echo "Transcript: $TRANSCRIPT_FILE"
 echo "Title:      ${TITLE:-<none>}"
+echo "YouTube:    ${YOUTUBE_ID:-<none>}"
 echo "Language:   $LANG"
 echo "Insights:   $TOP_INSIGHTS"
 echo "Chapters:   $MAX_CHAPTERS"
@@ -227,6 +234,9 @@ else
     if [[ -n "$TITLE" ]]; then
         analyze_cmd+=( "--title" "$TITLE" )
     fi
+    if [[ -n "$YOUTUBE_ID" ]]; then
+        analyze_cmd+=( "--youtube-id" "$YOUTUBE_ID" )
+    fi
     "${analyze_cmd[@]}"
 fi
 if [[ ! -f "$ANALYSIS_FILE" ]]; then
@@ -240,7 +250,11 @@ echo "===== STEP 2: Render Preview ====="
 if [[ $RESUME_MODE -eq 1 && -f "$PREVIEW_FILE" ]]; then
     echo "Exists: $PREVIEW_FILE — skipping (use --force to regenerate)."
 else
-    "./run.sh" render "$ANALYSIS_FILE" --output "$PREVIEW_FILE"
+    render_cmd=("./run.sh" render "$ANALYSIS_FILE" --output "$PREVIEW_FILE")
+    if [[ -n "$YOUTUBE_ID" ]]; then
+        render_cmd+=("--youtube-id" "$YOUTUBE_ID")
+    fi
+    "${render_cmd[@]}"
 fi
 if [[ ! -f "$PREVIEW_FILE" ]]; then
     echo "Preview file not found: $PREVIEW_FILE"

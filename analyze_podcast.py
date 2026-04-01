@@ -16,7 +16,7 @@ from utils import (
 )
 
 
-def build_analysis(transcript_text, title=None, lang="en", top_insights=8, max_chapters=10):
+def build_analysis(transcript_text, title=None, lang="en", top_insights=8, max_chapters=10, youtube_id=None):
     """Run the single-pass podcast analysis."""
     client = get_openai_client()
     if not client:
@@ -74,6 +74,8 @@ def build_analysis(transcript_text, title=None, lang="en", top_insights=8, max_c
             result["title"] = title
         if "language" not in result or not result["language"]:
             result["language"] = lang
+        if youtube_id:
+            result["youtube_id"] = youtube_id
 
         return result
     except json.JSONDecodeError as exc:
@@ -96,6 +98,7 @@ def main():
     parser.add_argument("--top", type=int, default=8, help="Max top insights (default: 8)")
     parser.add_argument("--chapters", type=int, default=10, help="Max chapters (default: 10)")
     parser.add_argument("--output", help="Custom output path (default: *_analysis.json)")
+    parser.add_argument("--youtube-id", help="YouTube video ID")
 
     args = parser.parse_args()
 
@@ -119,6 +122,7 @@ def main():
         lang=args.lang,
         top_insights=args.top,
         max_chapters=args.chapters,
+        youtube_id=args.youtube_id,
     )
     if not result:
         sys.exit(1)
