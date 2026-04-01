@@ -19,10 +19,12 @@
 
     <main>
       <div class="filter-bar" id="filter-bar">
-        <span class="filter-label">Language:</span>
-        <button class="filter-btn active" data-lang="all">All</button>
-        <button class="filter-btn" data-lang="ru">Русский</button>
-        <button class="filter-btn" data-lang="en">English</button>
+        <label for="lang-select">Language:</label>
+        <select id="lang-select" class="lang-select">
+          <option value="all">All languages</option>
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+        </select>
       </div>
       <p id="status">Loading catalog...</p>
       <ul class="catalog" id="catalog"></ul>
@@ -102,16 +104,10 @@
       }
 
       function setupFilters() {
-        var filterBar = document.getElementById('filter-bar');
-        var buttons = filterBar.querySelectorAll('.filter-btn');
-        
-        buttons.forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            buttons.forEach(function(b) { b.classList.remove('active'); });
-            btn.classList.add('active');
-            currentLang = btn.getAttribute('data-lang');
-            renderCatalog();
-          });
+        var select = document.getElementById('lang-select');
+        select.addEventListener('change', function() {
+          currentLang = select.value;
+          renderCatalog();
         });
       }
 
