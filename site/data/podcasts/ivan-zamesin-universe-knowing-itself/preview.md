@@ -1,4 +1,4 @@
-# Podcast Analysis
+# Мы — Вселенная, познающая сама себя. Иван Замесин | подкаст
 
 **Format:** Interview / Conversational | **Language:** ru | **Duration:** 53 min
 
