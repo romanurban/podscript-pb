@@ -23,7 +23,7 @@
         <select id="lang-select" class="lang-select">
           <option value="all">All languages</option>
           <option value="ru">Русский</option>
-          <option value="en">English</option>
+          <option value="en" selected>English</option>
         </select>
       </div>
       <p id="status">Loading catalog...</p>
@@ -40,7 +40,7 @@
       var status = document.getElementById('status');
       var catalog = document.getElementById('catalog');
       var allPodcasts = [];
-      var currentLang = 'all';
+      var currentLang = 'en';
 
       function setText(msg, isError) {
         status.textContent = msg;
@@ -100,7 +100,9 @@
         }
         var total = allPodcasts.length;
         var showing = filtered.length;
-        setText('Showing ' + showing + ' of ' + total + ' podcast' + (total === 1 ? '' : 's'), false);
+        var langNames = { 'all': '', 'ru': ' (RU)', 'en': ' (EN)' };
+        var langLabel = langNames[currentLang] || '';
+        setText('Showing ' + showing + ' of ' + total + ' podcast' + (total === 1 ? '' : 's') + langLabel, false);
       }
 
       function setupFilters() {
