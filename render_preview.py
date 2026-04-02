@@ -74,23 +74,22 @@ def render_markdown(data, youtube_id=None):
         md.append("## Top Insights")
         md.append("")
         for i, ins in enumerate(insights, 1):
-            headline = ins.get("headline", "")
             ts = ins.get("timestamp", "")
             speaker = ins.get("speaker", "")
-            quote = ins.get("quote", "")
-            why = ins.get("why_it_matters", "")
+            formulation = ins.get("formulation", "")
+            explanation = ins.get("explanation", "")
 
             speaker_str = f" ({speaker})" if speaker and speaker != "unknown" else ""
-            md.append(f"### {i}. {headline}")
+            md.append(f"### {i}.")
             md.append("")
             if ts:
-                md.append(f"> {ts}{speaker_str}")
+                md.append(f"> [{ts}]{speaker_str}")
                 md.append(">")
-            if quote:
-                md.append(f"> *\"{quote}\"*")
+            if formulation:
+                md.append(f"> *\"{formulation}\"*")
             md.append("")
-            if why:
-                md.append(why)
+            if explanation:
+                md.append(explanation)
                 md.append("")
 
     # Chapter guide

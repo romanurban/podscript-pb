@@ -46,16 +46,15 @@ analysis:
           summary: "2-3 sentences recounting this segment"
           topics: ["up to 5 topical tags"]
       top_insights:
-        - headline: "1 sentence capturing the idea"
+        - formulation: "the most interesting, specific and concrete formulation from the podcast — a key phrase, metaphor, empirical observation, or striking data point that captures the core of this idea"
           timestamp: "[HH:MM:SS]"
           speaker: "host/guest/name if known"
-          quote: "short verbatim quote or faithful paraphrase"
-          why_it_matters: "2-3 sentences explaining why this idea is fresh, non-trivial, or valuable; write plainly, avoid AI tropes"
+          explanation: "2-3 sentences explaining what this observation actually means, what it reveals, and why it gives a useful framework for thinking about the topic; be specific, not generic"
     constraints:
       max_chapters: "{max_chapters}"
       max_top_insights: "{top_insights}"
       chapter_duration_guideline: "prefer chronological grouping ~5-12 minutes each"
-      insight_selection: "prioritize counterintuitive, high-leverage ideas and unique mental models; skip obvious definitions or background info; prefer breadth over redundancy"
+      insight_selection: "extract concrete formulations, specific observations, useful frameworks, and striking data points that give the listener/viewer something actionable or a new lens; prioritize empirical claims, original metaphors, and non-obvious connections; avoid generic summaries or teasers"
       include_unknown_info: "if exact timestamp unknown, estimate and note 'approx'"
     instructions:
       - "Return a JSON object exactly matching the structure above."
