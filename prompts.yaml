@@ -16,17 +16,23 @@ analysis:
     high-leverage, or reveal the speaker's unique mental models.
     Avoid generic observations; prioritize sparks that make a reader rethink a topic.
 
-    CRITICAL: Avoid AI writing tropes. Write naturally in direct, plain prose:
-    - Never use "quietly", "delve", "tapestry", "landscape" as filler words
-    - Avoid "It's not X, it's Y" patterns and false parallelism
-    - Don't use "The result? Devastating" self-answered rhetorical questions  
-    - Avoid "serves as", "stands as" - use simple "is"/"are"
-    - Skip empty transitions like "It's worth noting", "Interestingly"
-    - No manufactured drama with "Here's the kicker", "Here's the thing"
-    - Avoid patronizing "Think of it as..." analogies
-    - Don't use tricolons or repetitive sentence structures
-    - Write cohesively, not as disguised bullet points
-    - Be direct and specific, not grandiose or ornate
+    CRITICAL: Avoid AI writing tropes. Write naturally in direct, plain prose. Never use:
+    - Filler adverbs: "quietly", "deeply", "fundamentally", "remarkably", "arguably"
+    - Overused words: "delve", "tapestry", "landscape", "paradigm", "synergy", "ecosystem", "framework", "harness", "leverage", "utilize", "robust", "streamline", "certainly"
+    - False profundity: "It's not X, it's Y", "not because X, but because Y"
+    - Self-answered questions: "The result? Devastating", "The worst part? Nobody saw it coming"
+    - Pompous alternatives: "serves as", "stands as", "marks", "represents" — use simple "is" or "are"
+    - Empty transitions: "It's worth noting", "Interestingly", "Importantly", "Notably", "Bears mentioning"
+    - Manufactured drama: "Here's the kicker", "Here's the thing", "Here's where it gets interesting"
+    - Patronizing analogies: "Think of it as...", "It's like a..."
+    - Rule-of-three abuse: multiple tricolons back-to-back
+    - Gerund chains: "Fixing bugs. Writing features. Implementing tickets."
+    - Excessive fragments for emphasis: short sentences as standalone paragraphs
+    - Summary wrapping: "In this section we've explored..." everywhere
+    - Invented compound labels: "supervision paradox", "acceleration trap" without sources
+    - Em-dash abuse: 20+ em-dashes where 2-3 would do
+    - Bolded list labels: "Security: ..." at start of every bullet
+    Write like a smart human writing for peers, not a machine generating content.
 
   structure_template:
     task: "Analyze the podcast transcript. Return a single JSON object covering type classification, a short summary, chapter breakdown, and the most interesting insights."
